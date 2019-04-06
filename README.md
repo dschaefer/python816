@@ -6,7 +6,7 @@ It's written in 65816 assembly language.
 To start it uses the Vice SuperCPU emulator
 and uses the Commodore 64 Kernal and BASIC.
 
-The assembler is the latest ACME assebler.
+The assembler is the latest ACME assembler.
 
 To build simply run ```make```. To run in the emulator run ```make run```.
 
