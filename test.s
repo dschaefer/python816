@@ -26,35 +26,37 @@ main:
 test:
     ; a + b
 
-    ; push b
-    lda     #a
-    pha
+    ; push b and increment reference count
+    ldx     #a
+    phx
+    +a8
+    inc     1, x
+    +a16
 
     ; push a
-    lda     #b
-    pha
+    ldx     #b
+    phx
+    +a8
+    inc     1, x
+    +a16
 
     ; op +
     plx
     phx
-    +a8
-    lda     1, x
-    +a16
-    tax
-    lda     ops_table, x
-    clc
-    adc+1   #op_plus
-    tax
-    jsr     (0, x)
+    +i8
+    ldy     1, x
+    +i16
+    ldx     ops_table, y
+    jsr     (op_plus, x)
 
     ; op toString
-    lda     0, s
-    tax
-    lda     ops_table, x
-    clc
-    adc+1   #op_toString
-    tax
-    jsr     (0, x)
+    plx
+    phx
+    +i8
+    ldy     1, x
+    +i16
+    ldx     ops_table, y
+    jsr     (op_toString, x)
 
     ; call print
     jsr     string_print
@@ -111,12 +113,19 @@ ops_table:
     !word   int16_ops
     !word   string_ops
 
+; object layout
+;   !byte   type
+;   !byte   reference count
+;   and the rest is the data
+
 a:
     !byte   t_int16
+    !byte   1
     !word   4
 
 b:
     !byte   t_int16
+    !byte   1
     !word   5
 
-c:  !skip   3
+c:  !skip   4

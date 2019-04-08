@@ -1,7 +1,12 @@
-OBJS =	test.prg \
-		test.o
+OBJS =	python.prg
+
+SRCS =	python.s \
+		stdio.s \
+		defs.s
 
 all:	$(OBJS)
+
+python.prg:	$(SRCS)
 
 %.prg:	%.s
 	acme -r $@.list -f cbm -o $@ $^
@@ -10,7 +15,7 @@ all:	$(OBJS)
 	acme -f plain -o $@ $^
 
 clean:
-	rm $(OBJS)
+	rm *.prg *.list
 
 run:	test.prg
-	xscpu64 -fs9 . -device9 1 -iecdevice9 test.prg
+	xscpu64 -fs9 . -device9 1 -iecdevice9 python.prg

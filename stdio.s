@@ -1,55 +1,32 @@
-    !cpu    65816
-    !source <65816/std.a>
-    !source <cbm/kernal.a>
-    !source <cbm/basic2.a>
-
-    * = $0800
-
-basic:
-    !byte   0
-    !word   end_of_basic
-    !word   10
-    !byte   token_SYS, ' '
-    !pet    "2062"
-end_of_basic
-    !byte   0, 0, 0
-
-main:
-    +cpu_native
-    +ai8
-
-; reset to stdio
+stdio_init:
     jsr     k_clrchn
+    rts
 
-; read in the string
+read_line:
     ldy     #$00
 -
     jsr     k_chrin
     cmp     #$0d
     beq     +
-    sta     data,y
+    sta     dp_string, y
     iny
     jmp     -
 +
-    sty     datalen
+    sty     dp_stringlen
     ; force the newline
     jsr     k_chrout
 
 ; spit it out
+print_line:
+    +a8
     ldy     #$00
 -
-    cpy     datalen
+    cpy     dp_stringlen
     beq     +
-    lda     data,y
+    lda     (dp_string), y
     iny
     jsr     k_chrout
     jmp     -
-
 +
-    +cpu_emu
+    +a16
     rts
-
-data:
-    !skip   80
-datalen:
-    !byte 0
