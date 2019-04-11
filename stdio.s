@@ -1,32 +1,22 @@
-stdio_init:
-    jsr     k_clrchn
-    rts
-
-read_line:
-    ldy     #$00
--
-    jsr     k_chrin
-    cmp     #$0d
-    beq     +
-    sta     dp_string, y
-    iny
-    jmp     -
-+
-    sty     dp_stringlen
-    ; force the newline
-    jsr     k_chrout
-
-; spit it out
+; print_line(A = length, X = pointer, DBR = data bank)
 print_line:
-    +a8
-    ldy     #$00
+    sta     +
+    phd
+    lda     #0
+    tcd
 -
-    cpy     dp_stringlen
-    beq     +
-    lda     (dp_string), y
-    iny
+    +a8
+    lda+2   0, x
+    phx
+    +cpu_emu
     jsr     k_chrout
-    jmp     -
-+
-    +a16
+    +cpu_native
+    +ai16
+    plx
+    inx
+    dec     +
+    bne     -
+    pld
     rts
++   ; length
+    !skip   2

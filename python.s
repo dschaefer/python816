@@ -2,6 +2,7 @@
     !source <65816/std.a>
     !source <cbm/kernal.a>
     !source <cbm/basic2.a>
+    !source <cbm/c64/petscii.a>
     !source "defs.s"
 
     * = $0800
@@ -32,13 +33,9 @@ main:
     rts
 
 python_main:
-    jsr     stdio_init
-    lda     #welcome
-    sta     dp_string
-    +a8
+    ; go to mix case and print message
+    ldx     #welcome
     lda     #welcome_end - welcome
-    sta     dp_stringlen
-    +a16
     jsr     print_line
     rts
 
@@ -46,6 +43,5 @@ direct_page:
     !skip   256
 
 welcome:
-    !pet    "Welcome to Python", $d
+    !pet    petscii_LOWERCASE, "Welcome to Python!", $d
 welcome_end:
-
