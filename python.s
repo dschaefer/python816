@@ -25,6 +25,7 @@ main:
     lda     #direct_page
     tcd
 
+    jsr     memory_init
     jsr     python_main
 
     ; pop back the old direct page, back to emu, and return
