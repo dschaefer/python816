@@ -1,9 +1,3 @@
-    !cpu    65816
-    !source <65816/std.a>
-    !source <cbm/kernal.a>
-    !source <cbm/basic2.a>
-    !source <cbm/c64/petscii.a>
-    !source "defs.s"
 
     * = $0800
 

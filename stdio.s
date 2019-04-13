@@ -1,6 +1,6 @@
 
-; print_line(A = length, X = pointer, DBR = data bank)
 print_line:
+    ; A = length, X = pointer, DBR = data bank
     sta     +
     phd
     lda     #0

@@ -1,15 +1,13 @@
 OBJS =	python.prg
 
-SRCS =	python.s \
+SRCS =	defs.s \
+		python.s \
 		memory.s \
-		stdio.s \
-		defs.s
+		stdio.s
 
 all:	$(OBJS)
 
 python.prg:	$(SRCS)
-
-%.prg:	%.s
 	acme -r $@.list -f cbm -o $@ $^
 
 %.o:	%.s
