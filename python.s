@@ -2,40 +2,50 @@
     * = $0800
 
 basic:
-    !byte   0
-    !word   end_of_basic
-    !word   10
-    !byte   token_SYS
-    !pet    "2061"
+    !byte 0
+    !word end_of_basic
+    !word 10
+    !byte token_SYS
+    !pet "2061"
 end_of_basic:
-    !byte   0, 0, 0
+    !byte 0, 0, 0
 
 main:
-    ; enter native mode
+    ; enter native mode and switch to python stack
     +cpu_native
     +ai16
-    ; set up our direct page saving the old one
-    phd
-    lda     #direct_page
-    tcd
+    tsc
+    sta basic_stack
+    lda #$7fff
+    tcs
 
-    jsr     memory_init
-    jsr     python_main
+    ; initialize the object store
+    ;jsr objects_init
+    ; run python
+    jsr python_main
 
-    ; pop back the old direct page, back to emu, and return
-    pld
+    ; restore stack, back to emu, and return to basic
+    lda basic_stack
+    tcs
     +cpu_emu
     rts
 
-python_main:
-    ; go to mix case and print message
-    ldx     #welcome
-    lda     #welcome_end - welcome
-    jsr     print_line
-    rts
+basic_stack:
+    !skip 2
 
-direct_page:
-    !skip   256
+python_main:
+    ; print welcome message
+    +a8
+    lda #0
+    pha
+    +a16
+    lda #welcome
+    pha
+    lda #(welcome_end - welcome)
+    pha
+    jsr print_line
+    +pop 5
+    rts
 
 welcome:
     !pet    petscii_LOWERCASE, "Welcome to Python!", $d

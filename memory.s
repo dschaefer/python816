@@ -3,7 +3,7 @@
     end_bank    = $00d27f
     min_size    = 6
 
-memory_init:
+objects_init:
     ; initialize free lists for each bank
     +a8
     lda start_bank
@@ -91,5 +91,5 @@ malloc:
     ;--> set the size bit 1 to mark used
     sta .pointer
 .done:
-    +fexit
+    +fexit .args
     rts
