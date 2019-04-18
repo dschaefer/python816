@@ -1,25 +1,37 @@
+;   Object management
+;
+;   Object header
+;       5 bits type - list in defs.h
+;       3 bits size - number of bytes (up to 6)
+;       8 bits ref count
+;       16 bits extended size if size == $7, number of bytes (> 6)
 
+;   xscpu registers for identifying available banks
     start_bank  = $00d27d
     end_bank    = $00d27f
     min_size    = 6
 
+;   objects_init
+;       initialize free lists for each bank
 objects_init:
-    ; initialize free lists for each bank
     +a8
     lda start_bank
     tax
 .loop:
+    ; set data bank
     phx
     plb
     +a16
     ; pointer of first free block
     lda #2
     sta $0000
-    ; size
-    lda #$fffa  ; 64k - header starting at $2
+    ; first/only block - type_none, extended size, ref count zero
+    lda #(((type_free | extended_size) << 8) | 0)
     sta $0002
-    ; pointer to next block = null
-    stz $0004
+    ; extended size - rest of the bank
+    lda #($10000 - 6)
+    sta $0004
+    ; next bank
     +a8
     inx
     txa
@@ -29,12 +41,17 @@ objects_init:
     +a16
     rts
 
-malloc:
-    !zone malloc
+;   object_alloc(type: byte, size: word): pointer
+;       search bank by bank looking for first fit
+;       split if necessary and set up object header
+;       TODO free will need to order the free blocks smallest to largest
+;       TODO might want to optimize using buckets for common sizes
+object_alloc:
+    !zone object_alloc
     +fenter 2, ~.args
-    .size = .args
-    .pointer = .args + 2
-    .pointer_bank = .args + 4
+    .type = .args
+    .size = .args + 1
+    .result = .args + 3
     .block = 1
 
     ; try each bank
@@ -69,14 +86,14 @@ malloc:
     cmp end_bank
     bne .bank_loop
     ; not found, return null
-    stz .pointer_bank
+    stz .result + 2
     +a16
-    stz .pointer
+    stz .result
     bra .done
 .found_block:
     ; store away the the bank
     +a8
-    stx .pointer_bank
+    stx .result + 2
     +a16
     ; A has size of block, we can use X now
     ; if extra space larger than min size, split it
@@ -89,7 +106,7 @@ malloc:
     ;--> TODO
 .return_block:
     ;--> set the size bit 1 to mark used
-    sta .pointer
+    sta .result
 .done:
     +fexit .args
     rts
