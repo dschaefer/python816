@@ -7,6 +7,12 @@
 ;   Free blocks have another 16 bit pointer to the next free block
 ;   That makes the min size 6
     min_size    = 6
+    first_free  = $0000
+    first_block = $0002
+
+;   offsets in block headers
+    size_offset = 2
+    next_free   = 4
 
 ;   xscpu registers for identifying available banks
     start_bank  = $00d27d
@@ -24,13 +30,13 @@ objects_init:
     plb
     +a16
     ; pointer of first free block
-    lda #2
-    sta $0000
+    lda #first_block
+    sta first_free
     ; first/only block - type_none, ref count zero, i.e. 0
-    stz $0002
+    stz first_block
     ; size - rest of the bank
     lda #($10000 - 6)
-    sta $0004
+    sta first_block + size_offset
     ; next bank
     +a8
     inx
@@ -52,6 +58,7 @@ object_alloc:
     +fenter 2, ~.args
     .size = .args
     .result = .args + 2
+    .current = 1
 
     ; try each bank
     +a8
@@ -62,7 +69,7 @@ object_alloc:
     plb
     ; try each block
     +a16
-    lda $0000
+    lda first_free
     beq .bank_next
 .block_loop:
     sta .result
@@ -70,7 +77,7 @@ object_alloc:
     lda (.result)
     bne .block_next
     ; load up the size
-    ldy #2
+    ldy #size_offset
     lda (.result), y
 .check_size
     cmp (.size)
@@ -95,8 +102,28 @@ object_alloc:
 .found_block:
     ; store away the the bank, the rest of the pointer is already there
     +a8
-    stx .result + 2
+    stx .result + 2 ; X is now available
     +a16
+
+    ; remove us from the free list
+    ldy #next_free
+    lda first_free
+    cmp .result
+    bne .free_loop
+    ; we were the first, copy our next to it
+    lda (.result), y
+    sta first_free
+    bra .free_done
+.free_loop
+    sta .current
+    lda (.current), y ; in theory this should never be null
+    cmp .result
+    bne .free_loop
+    ; unlink it
+    lda (.result), y
+    sta (.current), y
+.free_done
+
     ; do we need to split the block?
     sec
     sbc .size
@@ -136,8 +163,45 @@ object_alloc:
 ;   add to the free list after all smaller blocks
 _object_add_free:
     !zone _object_add_free
-    +fenter 0, ~.args
+    +fenter 4, ~.args
     .block = .args
-    ; --> TODO
+    .previous = 3
+    .current = 1
+
+    ; load up first block
+    stz .previous
+    lda first_free
+    beq .end_loop ; list is empty
+.loop
+    ; loop through list while smaller sizes
+    sta .current
+    ldy #size_offset
+    lda (.current), y
+    cmp (.block), y
+    +blt .end_loop
+    ; iterate
+    lda .current
+    sta .previous
+    ldy #next_free
+    lda (.current), y
+    bne .loop ; fall through at end of list
+.end_loop
+    ; insert us after .previous
+    ldy #next_free
+    lda .previous
+    bne .insert
+    ; .previous was null, make us first
+    lda first_free
+    sta (.block), y
+    lda .block
+    sta first_free
+    bra .done
+.insert
+    ; insert us after .previous
+    lda (.previous), y
+    sta (.block), y
+    lda .block
+    sta (.previous), y
+.done
     +fexit .args
     rts
