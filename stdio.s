@@ -1,33 +1,28 @@
 
+    ; print_line(string: pointer): void
 print_line:
-    ; A = length, X = pointer, DBR = data bank
     !zone print_line
     +fenter 2, ~.args
-    .length = .args             ; word
     .pointer = .args + 2        ; word
-    .pointer_bank = .args + 4   ; byte
-    .n = 1                      ; word
 
     ; switch to basic stack for kernel call
-    lda basic_stack
+    lda+3 basic_stack
     tcs
     ; set data bank
     +a8
-    lda .pointer_bank
+    lda .pointer + 2
     pha
     plb
     +a16
     ; load up the pointer
     ldx .pointer
-    ; set remaining
-    lda .length
-    sta .n
 .loop:
-    ; stow away X since chrout mucks with it
+    ; load up the character
     +a8
     lda $0000, x
     +a16
-    ; print it out using kernel call
+    beq .done
+    ; prepare for the jump to the kernel
     phx
     phd
     tay
@@ -41,8 +36,8 @@ print_line:
     pld
     plx
     inx
-    dec .n
-    bne .loop
-    ; fexit will put our stack back
+    bra .loop
+.done:
+    ; fexit will switch back to python stack
     +fexit .args
     rts

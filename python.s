@@ -48,5 +48,5 @@ python_main:
     rts
 
 welcome:
-    !pet    petscii_LOWERCASE, "Welcome to Python!", $d
+    !pet    petscii_LOWERCASE, "Welcome to Python!", $d, $0
 welcome_end:

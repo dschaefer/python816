@@ -21,14 +21,14 @@
 ;   objects_init
 ;       initialize free lists for each bank
 objects_init:
-    +a8
+    +ai8
     lda start_bank
     tax
 .loop:
     ; set data bank
     phx
     plb
-    +a16
+    +ai16
     ; pointer of first free block
     lda #first_block
     sta first_free
@@ -38,13 +38,13 @@ objects_init:
     lda #($10000 - 6)
     sta first_block + size_offset
     ; next bank
-    +a8
+    +ai8
     inx
     txa
     cmp end_bank
     bne .loop
     ; done
-    +a16
+    +ai16
     rts
 
 ;   object_alloc(size: word): pointer
