@@ -4,31 +4,25 @@
     !source <cbm/basic2.a>
     !source <cbm/c64/petscii.a>
 
-; object size
-    extended_size   = 7
-    type_shift      = 3
-
 ;   types
-    type_free       = 0 << type_shift
-    type_none       = 1 << type_shift
-    type_noimpl     = 2 << type_shift
-    type_ellipse    = 3 << type_shift
-    type_int        = 4 << type_shift
-    type_float      = 5 << type_shift
-    type_complex    = 6 << type_shift
-    type_string     = 7 << type_shift
-    type_tuple      = 8 << type_shift
-    type_bytes      = 9 << type_shift
-    type_list       = 10 << type_shift
-    type_bytearray  = 11 << type_shift
-    type_set        = 12 << type_shift
-    type_frozenset  = 13 << type_shift
-    type_dict       = 14 << type_shift
+    type_free       = 0
+    type_none       = 1
+    type_noimpl     = 2
+    type_ellipse    = 3
+    type_true       = 4
+    type_false      = 5
+    type_int        = 6
+    type_float      = 7
+    type_complex    = 8
+    type_string     = 9
+    type_tuple      = 10
+    type_bytes      = 11
+    type_list       = 12
+    type_bytearray  = 13
+    type_set        = 14
+    type_frozenset  = 15
+    type_dict       = 16
     ; --> more
-
-;   store/restore stack and call a kernel function
-!macro kcall .func {
-}
 
 ;   pop off temporaries
 !macro pop .n {

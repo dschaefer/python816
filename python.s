@@ -20,7 +20,7 @@ main:
     tcs
 
     ; initialize the object store
-    ;jsr objects_init
+    jsr objects_init
     ; run python
     jsr python_main
 
