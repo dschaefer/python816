@@ -24,6 +24,16 @@
     type_dict       = 16
     ; --> more
 
+;   ops
+    op_print        = 1
+
+!macro alloca .n {
+    tsc
+    sec
+    sbc #.n
+    tcs
+}
+
 ;   pop off temporaries
 !macro pop .n {
     tsc

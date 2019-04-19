@@ -34,19 +34,22 @@ basic_stack:
     !skip 2
 
 python_main:
-    ; print welcome message
+    ; push space for new string object
+    +alloca 3
+    ; push pointer to the string buffer
     +a8
     lda #0
     pha
     +a16
     lda #welcome
     pha
-    lda #(welcome_end - welcome)
-    pha
-    jsr print_line
-    +pop 5
+    jsr string_new
+    ; pop the buffer pointer
+    +pop 3
+    ; print it
+    jsr string_print
+    +pop 3
     rts
 
 welcome:
     !pet    petscii_LOWERCASE, "Welcome to Python!", $d, $0
-welcome_end:

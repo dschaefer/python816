@@ -3,7 +3,7 @@
 print_line:
     !zone print_line
     +fenter 2, ~.args
-    .pointer = .args + 2        ; word
+    .string = .args
 
     ; switch to basic stack for kernel call
     lda+3 basic_stack

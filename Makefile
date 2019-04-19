@@ -3,7 +3,7 @@ OBJS =	python.prg
 SRCS =	defs.s \
 		python.s \
 		memory.s \
-		stdio.s
+		string.s
 
 all:	$(OBJS)
 
