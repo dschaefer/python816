@@ -159,6 +159,22 @@ object_alloc:
     +fexit .args
     rts
 
+;   object_free(block: pointer): void
+object_free:
+    !zone object_free
+    +fenter 0, ~.args
+    .block = .args
+    ; simply set the data bank and call add free
+    +a8
+    lda .block + 2
+    phb
+    +a16
+    lda .block
+    pha
+    jsr _object_add_free
+    +fexit .args
+    rts
+
 ;   _object_add_free(block: word): void
 ;   add to the free list after all smaller blocks
 _object_add_free:
