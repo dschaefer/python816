@@ -1,3 +1,4 @@
+
 ;   Object management
 ;
 ;   Object header
@@ -61,14 +62,14 @@ object_alloc:
     .current = 1
 
     ; try each bank
-    +a8
+    +ai8
     lda start_bank
     tax
 .bank_loop:
     phx
     plb
     ; try each block
-    +a16
+    +ai16
     lda first_free
     beq .bank_next
 .block_loop:
@@ -80,7 +81,7 @@ object_alloc:
     ldy #size_offset
     lda (.result), y
 .check_size
-    cmp (.size)
+    cmp .size
     +bge .found_block   ; big enough
 .block_next:
     ; get the next block pointer and loop

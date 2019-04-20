@@ -53,6 +53,7 @@
         sec
         sbc #.locals
     }
+    tcs
     tcd
     ; 8 saved regs + 2 return address + 1
     .args = 11 + .locals
