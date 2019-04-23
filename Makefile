@@ -2,6 +2,7 @@ OBJS =	python.prg
 
 SRCS =	defs.s \
 		python.s \
+		util.s \
 		memory.s \
 		string.s
 

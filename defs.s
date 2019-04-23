@@ -27,51 +27,146 @@
 ;   ops
     op_print        = 1
 
-!macro alloca .n {
-    tsc
-    sec
-    sbc #.n
-    tcs
-}
-
-;   pop off temporaries
-!macro pop .n {
-    tsc
-    clc
-    adc #.n
-    tcs
-}
-
-;   enter frame
-!macro fenter .locals, ~.args {
+!macro pushall ~.fp {
     pha
     phx
     phy
-    phd
-    tsc
-    !if .locals > 0 {
-        sec
-        sbc #.locals
-    }
-    tcs
-    tcd
-    ; 8 saved regs + 2 return address + 1
-    .args = 11 + .locals
+    phb
+    !set .fp = .fp + 7
 }
 
-; exit frame
-!macro fexit .args {
-    .locals = .args - 11
-    tdc
-    !if .locals > 0 {
-        clc
-        adc #.locals
-    }
-    tcs
-    pld
+!macro popall ~.fp {
+    plb
     ply
     plx
     pla
+    !set .fp = .fp - 7
+}
+
+!macro alloca ~.fp, .size {
+    !if .size = 2 {
+        pha
+    } else {
+        !if .size = 4 {
+            pha
+            pha
+        } else {
+            tsc
+            sec
+            sbc #.size
+            tcs
+        }
+    }
+    !set .fp = .fp + .size
+}
+
+!macro popa ~.fp, .size {
+    !if .size = 2 {
+        pla
+    } else {
+        !if .size = 4 {
+            pla
+            pla
+        } else {
+            tsc
+            clc
+            adc #.size
+            tcs
+        }
+    }
+    !set .fp = .fp - .size
+}
+
+!macro pusha ~.fp {
+    pha
+    !set .fp = .fp + 2
+}
+
+!macro popa ~.fp {
+    pla
+    !set .fp = .fp - 2
+}
+
+!macro pushx ~.fp {
+    phx
+    !set .fp = .fp + 2
+}
+
+!macro popx ~.fp {
+    plx
+    !set .fp = .fp + 2
+}
+
+!macro pushy ~.fp {
+    phy
+    !set .fp = .fp + 2
+}
+
+!macro popy ~.fp {
+    ply
+    !set .fp = .fp + 2
+}
+
+!macro checkfp .fp {
+    !if .fp != 0 {
+        !error "stack not cleared"
+    }
+}
+
+!macro popall ~.fp, .locals {
+    +popa ~.fp, .locals
+    +popall ~.fp
+    +checkfp .fp
+}
+
+!macro ldas .fp, .var {
+    lda .fp - .var + 1, s
+}
+
+!macro ldasy .fp, .var {
+    lda (.fp - .var + 1, s), y
+}
+
+!macro ldasy .fp, .var, .y {
+    ldy #.y
+    lda (.fp - .var + 1, s), y
+}
+
+!macro cmps .fp, .var {
+    cmp .fp - .var + 1, s
+}
+
+!macro cmpsy .fp, .var {
+    cmp (.fp - .var + 1, s), y
+}
+
+!macro sbcs .fp, .var {
+    sbc .fp - .var + 1, s
+}
+
+!macro sbcsy .fp, .var {
+    sbc (.fp - .var + 1, s), y
+}
+
+!macro adcs .fp, .var {
+    adc .fp - .var + 1, s
+}
+
+!macro adcsy .fp, .var {
+    adc (.fp - .var + 1, s), y
+}
+
+!macro stas .fp, .var {
+    sta .fp - .var + 1, s
+}
+
+!macro stasy .fp, .var {
+    sta (.fp - .var + 1, s), y
+}
+
+!macro stasy .fp, .var, .y {
+    ldy #.y
+    sta (.fp - .var + 1, s), y
 }
 
 ; missing 6502 memonics
@@ -87,4 +182,20 @@
 !macro ble .t {
     +blt .t
     beq .t
+}
+
+!macro popa .size {
+    !if .size = 2 {
+        pla
+    } else {
+        !if .size = 4 {
+            pla
+            pla
+        } else {
+            tsc
+            clc
+            adc #.size
+            tcs
+        }
+    }
 }

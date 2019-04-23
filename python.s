@@ -37,10 +37,14 @@ main:
 
 basic_stack:
     !skip 2
+python_stack:
+    !skip 2
 
 python_main:
+    !zone python_main
+    .fp = 0
     ; push space for new string object
-    +alloca 3
+    +alloca ~.fp, 3
     ; push pointer to the string buffer
     +a8
     lda #0
@@ -50,13 +54,14 @@ python_main:
     pha
     jsr string_new
     ; pop the buffer
-    +pop 3
+    +popa 3
     ; TODO increase ref count on the string object
     ; print it
     jsr string_print
     ; TODO decrease ref count on the string object
     ; pop the string object
-    +pop 3
+    +popa ~.fp, 3
+    +checkfp .fp
     rts
 
 welcome:
