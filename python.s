@@ -1,3 +1,4 @@
+!source "defs.ah"
 
     * = $0800
 
@@ -35,26 +36,16 @@ main:
     +cpu_emu
     rts
 
-basic_stack:
-    !skip 2
-python_stack:
-    !skip 2
-
 python_main:
     !zone python_main
     .fp = 0
     ; push space for new string object
     +alloca ~.fp, 3
     ; push pointer to the string buffer
-    +a8
-    lda #0
-    pha
-    +a16
-    lda #welcome
-    pha
+    +pushptra ~.fp, 0, welcome
     jsr string_new
     ; pop the buffer
-    +popa 3
+    +popa ~.fp, 3
     ; TODO increase ref count on the string object
     ; print it
     jsr string_print
@@ -63,6 +54,16 @@ python_main:
     +popa ~.fp, 3
     +checkfp .fp
     rts
+
+!source "util.s"
+!source "memory.s"
+!source "string.s"
+
+; todo move these to direct page
+basic_stack:
+    !skip 2
+python_stack:
+    !skip 2
 
 welcome:
     !pet    petscii_LOWERCASE, "Welcome to Python!", $d, $0

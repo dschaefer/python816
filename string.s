@@ -9,37 +9,25 @@ string_new:
     +pushall ~.fp
 
     ; load up the pointer to the buffer to find the size
-    +a8
-    +ldas .fp, .buffer - 2
-    pha
-    plb
-    +a16
+    +ldbanks .fp, .buffer
     ldy #0 ; strlen
-.loop_strlen
     +a8
+.loop_strlen
     +ldasy .fp, .buffer
-    +a16
     beq .done_strlen
     iny
     bra .loop_strlen
 .done_strlen
+    +a16
     +alloca ~.fp, 3
     .newobj = .fp
     iny ; make sure we capture the zero terminator
     +pushy ~.fp
     jsr object_alloc
     ; copy the new object to .result
-    +a8
-    +ldas .fp, .newobj - 2
-    +stas .fp, .result - 2
-    pha
-    plb
-    +a16
-    +ldas .fp, .newobj
-    +stas .fp, .result
+    +cpyptrs .fp, .newobj, .result
     ; set the header
-    lda #type_string << 8
-    +stasy .fp, .result, 0
+    +staptrsy .fp, .result, 0, type_string << 8
     ; copy the string, copy pointer to result
     ; first the banks (self modify mvn instruction)
     +a8
@@ -70,13 +58,8 @@ string_print:
     +pushall ~.fp
 
     ; set the data bank
-    +a8
-    +ldas .fp, .string - 2
-    pha
-    plb
-    +a16
-    ; load up the pointer and skip over header
-    +ldas .fp, .string
+    +ldptrsa .fp, .string
+    ; skip over the header to get to the chars
     clc
     adc #4
     tax

@@ -168,13 +168,9 @@ object_free:
     .fp = 0
     +pushall ~.fp
     ; simply set the data bank and call add free
-    +a8
-    +ldas .fp, .block - 2
-    phb
-    +a16
-    +ldas .fp, .block
-    pha
+    +pushptrs ~.fp, .block
     jsr _object_add_free
+    +popa ~.fp, 3
     +popall ~.fp
     +checkfp .fp
     rts

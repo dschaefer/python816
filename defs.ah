@@ -199,3 +199,61 @@
         }
     }
 }
+
+!macro pushptra ~.fp, .bank, .ptr {
+    +a8
+    lda #.bank
+    pha
+    +a16
+    lda #.ptr
+    pha
+    !set .fp = .fp + 3
+}
+
+!macro pushptrs ~.fp, .var {
+    +a8
+    +ldas .fp, .var - 2
+    pha
+    +a16
+    +ldas .fp, .var
+    pha
+    !set .fp = .fp + 3
+}
+
+!macro ldbanks .fp, .var {
+    +a8
+    +ldas .fp, .var - 2
+    pha
+    plb
+    +a16
+}
+
+!macro ldptrsa .fp, .var {
+    +a8
+    +ldas .fp, .var - 2
+    pha
+    plb
+    +a16
+    +ldas .fp, .var
+}
+
+!macro cpyptrs .fp, .from, .to {
+    +a8
+    +ldas .fp, .from - 2
+    +stas .fp, .to - 2
+    pha
+    plb
+    +a16
+    +ldas .fp, .from
+    +stas .fp, .to
+}
+
+!macro staptrsy .fp, .var, .y, .value {
+    +a8
+    +ldas .fp, .var - 2
+    pha
+    plb
+    +a16
+    lda #.value
+    +stasy .fp, .var, .y
+}

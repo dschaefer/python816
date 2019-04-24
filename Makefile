@@ -1,7 +1,7 @@
 OBJS =	python.prg
 
-SRCS =	defs.s \
-		python.s \
+SRCS =	python.s \
+		defs.ah \
 		util.s \
 		memory.s \
 		string.s
@@ -9,10 +9,10 @@ SRCS =	defs.s \
 all:	$(OBJS)
 
 python.prg:	$(SRCS)
-	acme -r $@.list -f cbm -o $@ $^
+	acme -r $@.list -f cbm -o $@ $<
 
 %.o:	%.s
-	acme -f plain -o $@ $^
+	acme -f plain -o $@ $<
 
 clean:
 	rm *.prg *.list
