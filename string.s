@@ -1,3 +1,5 @@
+; string implementation
+; strings are zero terminated
 
 ;   string_new(buffer: pointer): pointer
 ;       allocates a new object and copies the string from the buffer

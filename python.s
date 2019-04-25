@@ -39,18 +39,8 @@ main:
 python_main:
     !zone python_main
     .fp = 0
-    ; push space for new string object
-    +alloca ~.fp, 3
-    ; push pointer to the string buffer
-    +pushptra ~.fp, 0, welcome
-    jsr string_new
-    ; pop the buffer
-    +popa ~.fp, 3
-    ; TODO increase ref count on the string object
-    ; print it
-    jsr string_print
-    ; TODO decrease ref count on the string object
-    ; pop the string object
+    +pushptra ~.fp, 0, _test_main
+    jsr code_run
     +popa ~.fp, 3
     +checkfp .fp
     rts
@@ -58,6 +48,7 @@ python_main:
 !source "util.s"
 !source "memory.s"
 !source "string.s"
+!source "code.s"
 
 ; todo move these to direct page
 basic_stack:
@@ -65,5 +56,30 @@ basic_stack:
 python_stack:
     !skip 2
 
-welcome:
-    !pet    petscii_LOWERCASE, "Welcome to Python!", $d, $0
+_test_welcome:
+    !word type_string << 8 | 1
+    !word ++ - +
++
+    !pet petscii_LOWERCASE, "Welcome to Python!", $d, $0
+++
+
+_test_print:
+    !word type_string << 8 | 1
+    !word ++ - +
++
+    !pet "print", 0
+++
+
+_test_main:
+    !word type_code << 8 | 1
+    !word ++ - +
++
+    !word ++++ - +++
++++
+    !byte opcode_load, 0
+    !byte opcode_load, 1
+    !byte opcode_call_function, 1
+++++
+    !24 _test_welcome
+    !24 _test_print
+++
