@@ -15,24 +15,37 @@ main:
     ; enter native mode and switch to python stack
     +cpu_native
     +ai16
+
+    ; set up the direct page
+    lda #$7000
+    tcd
+
+    ; set up the call stack
     tsc
-    sta basic_stack
+    sta dp_basic_stack
     lda #$7fff
     tcs
 
     ; initialize the object store
     jsr objects_init
+
     ; run python
     jsr python_main
 
-    ; restore stack, back to emu, and return to basic
-    +a8
+    ; restore call stack    
+    lda dp_basic_stack
+    tcs
+
+    ; restore direct page
     lda #0
+    tcd
+
+    ; restore data bank
+    +a8
     pha
     plb
-    +a16
-    lda basic_stack
-    tcs
+
+    ; back to basic
     +cpu_emu
     rts
 
@@ -49,12 +62,6 @@ python_main:
 !source "memory.s"
 !source "string.s"
 !source "code.s"
-
-; todo move these to direct page
-basic_stack:
-    !skip 2
-python_stack:
-    !skip 2
 
 _test_welcome:
     !word type_string << 8 | 1

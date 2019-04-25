@@ -4,10 +4,19 @@
     !source <cbm/basic2.a>
     !source <cbm/c64/petscii.a>
 
-!macro enum ~.val, ~.name {
+!macro field ~.val, ~.name, .size {
     .name = .val
-    !set .val = .val + 1
+    !set .val = .val + .size
 }
+
+!macro enum ~.val, ~.name {
+    +field ~.val, ~.name, 1
+}
+
+;   direct page offsets
+    !set dp_offsets = 0
+    +field ~dp_offsets, ~dp_basic_stack, 2
+    +field ~dp_offsets, ~dp_python_stack, 2
 
 ;   object types
     !set type_enum = 0

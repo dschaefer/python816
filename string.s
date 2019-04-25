@@ -67,8 +67,8 @@ string_print:
     tax
     ; switch to the basic stack
     tsc
-    sta+3 python_stack
-    lda+3 basic_stack
+    sta dp_python_stack
+    lda dp_basic_stack
     tcs
     ; save away the direct page register and set to zero
     phd
@@ -99,7 +99,7 @@ string_print:
     ; restore the direct page register, stack, and exit
     +a16
     pld
-    lda+3 python_stack
+    lda dp_python_stack
     tcs
     +popall ~.fp, 0
     rts
