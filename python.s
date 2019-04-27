@@ -7,23 +7,41 @@ basic:
     !word end_of_basic
     !word 10
     !byte token_SYS
-    !pet "2061"
+    !pet "2560" ; address of start
 end_of_basic:
     !byte 0, 0, 0
 
-main:
+;   The direct page
+;       make sure it's aligned on page boundary for performance
+    !align $ff, 0
+direct_page:
+    !zone direct_page
+    dp_basic_stack+1 = * - direct_page
+    !word 0
+    dp_python_stack+1 = * - direct_page
+    !word $cfff
+    dp_object_stack+1 = * - direct_page
+    !word $c7ff
+    dp_pc = * - direct_page
+    !24 0
+    ; fill out to the end of the direct page
+    !align $ff, 0, 0
+
+;   The entry point
+start:
+    !zone start
     ; enter native mode and switch to python stack
     +cpu_native
     +ai16
 
     ; set up the direct page
-    lda #$7000
+    lda #direct_page
     tcd
 
-    ; set up the call stack
+    ; switch call stacks
     tsc
     sta dp_basic_stack
-    lda #$7fff
+    lda dp_python_stack
     tcs
 
     ; initialize the object store
@@ -49,6 +67,12 @@ main:
     +cpu_emu
     rts
 
+!source "tables.s"
+!source "util.s"
+!source "memory.s"
+!source "string.s"
+!source "code.s"
+
 python_main:
     !zone python_main
     .fp = 0
@@ -57,11 +81,6 @@ python_main:
     +popa ~.fp, 3
     +checkfp .fp
     rts
-
-!source "util.s"
-!source "memory.s"
-!source "string.s"
-!source "code.s"
 
 _test_welcome:
     !word type_string << 8 | 1

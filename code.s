@@ -6,3 +6,9 @@
 ;   code_run(code_object: pointer): void
 code_run:
     rts
+
+opcode_impl_load:
+    rts
+
+opcode_impl_call_function:
+    rts

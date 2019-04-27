@@ -13,11 +13,6 @@
     +field ~.val, ~.name, 1
 }
 
-;   direct page offsets
-    !set dp_offsets = 0
-    +field ~dp_offsets, ~dp_basic_stack, 2
-    +field ~dp_offsets, ~dp_python_stack, 2
-
 ;   object types
     !set type_enum = 0
     +enum ~type_enum, ~type_free
@@ -25,27 +20,6 @@
     +enum ~type_enum, ~type_dict
     +enum ~type_enum, ~type_code
     ; --> more
-
-;   object operations
-    !set op_enum = 0
-
-    ; standard operations that match op_codes
-    ; print(name, args...): void
-    +enum ~op_enum, ~op_print
-
-    ; operations used by other ops
-    ; hash(name): value
-    +enum ~op_enum, ~op_hash
-
-;   op codes
-    !set opcode_enum = 0
-    +enum ~opcode_enum, ~opcode_load
-    +enum ~opcode_enum, ~opcode_load_none
-    +enum ~opcode_enum, ~opcode_call_function
-    +enum ~opcode_enum, ~opcode_return
-
-    ; lower 7 bits are the object op
-    opcode_op = %10000000
 
 !macro pushall ~.fp {
     pha
