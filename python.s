@@ -7,7 +7,7 @@ basic:
     !word end_of_basic
     !word 10
     !byte token_SYS
-    !pet "2560" ; address of start
+    !pet "2560" ; address of start $0a00
 end_of_basic:
     !byte 0, 0, 0
 
@@ -16,13 +16,20 @@ end_of_basic:
     !align $ff, 0
 direct_page:
     !zone direct_page
+    ; storage for the BASIC stack while in python
     dp_basic_stack+1 = * - direct_page
     !word 0
+    ; storage for the python stack when switching to BASIC
     dp_python_stack+1 = * - direct_page
+    !word $9fff
+    ; object stack pointer
+    dp_sp+1 = * - direct_page
     !word $cfff
-    dp_object_stack+1 = * - direct_page
-    !word $c7ff
-    dp_pc = * - direct_page
+    ; object frame pointer
+    dp_fp+1 = * - direct_page
+    !word $cfff
+    ; current function program counter
+    dp_pc+1 = * - direct_page
     !24 0
     ; fill out to the end of the direct page
     !align $ff, 0, 0
