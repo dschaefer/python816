@@ -17,7 +17,7 @@ python.prg:	$(SRCS)
 	acme -f plain -o $@ $<
 
 clean:
-	rm *.prg *.list
+	del *.prg *.list
 
 run:	python.prg
 	xscpu64 -fs9 . -device9 1 -iecdevice9 python.prg
