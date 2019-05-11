@@ -1,12 +1,12 @@
 OBJS =	python.prg
 
-SRCS =	python.s \
+SRCS =	python.asm \
 		defs.ah \
-		dict.s \
-		memory.s \
-		string.s \
-		tables.s \
-		util.s
+		dict.ah \
+		memory.ah \
+		string.ah \
+		tables.ah \
+		util.ah
 
 all:	$(OBJS)
 

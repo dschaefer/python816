@@ -1,4 +1,9 @@
-!source "defs.ah"
+    !cpu    65816
+    !source <65816/std.a>
+    !source <cbm/kernal.a>
+    !source <cbm/basic2.a>
+    !source <cbm/c64/petscii.a>
+    !source "defs.ah"
 
     * = $0800
 
@@ -74,11 +79,11 @@ start:
     +cpu_emu
     rts
 
-!source "tables.s"
-!source "util.s"
-!source "memory.s"
-!source "string.s"
-!source "code.s"
+!source "tables.ah"
+!source "util.ah"
+!source "memory.ah"
+!source "string.ah"
+!source "code.ah"
 
 python_main:
     !zone python_main
