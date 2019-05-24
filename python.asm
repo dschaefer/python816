@@ -22,7 +22,9 @@ start
     rts
 
 print .proc
-    ; X = pointer to string
+    ; B, X = pointer to string
+    pha
+    phy
     .a8
 loop
     lda $0, b, x
@@ -31,18 +33,25 @@ loop
     phx
     phb
     .x8
+    ; set bank to zero
     ldy #0
     phy
-    plb ; set bank to zero
+    plb
+    ; call the kernel
     .cpuemu
     jsr $FFD2 ; chrout
     .cpunat
+    ; put the bank back
     .x16
     plb
     plx
+    ; next character
     inx
     bra loop
 done
+    ; put things back and return
     .a16
+    ply
+    pla
     rts
     .pend
