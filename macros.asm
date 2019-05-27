@@ -18,11 +18,11 @@ x16 .macro
     rep #$10
     .endm
 
-a8x8 .macro
+ax8 .macro
     sep #$30
     .endm
 
-a16x16 .macro
+ax16 .macro
     rep #$30
     .endm
 
@@ -34,4 +34,11 @@ cpunat .macro
 cpuemu .macro
     sec
     xce
+    .endm
+
+swapStacks .macro from, to
+    tsc
+    sta \from
+    lda \to
+    tcs
     .endm

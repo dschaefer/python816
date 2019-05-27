@@ -10,21 +10,44 @@
 hello
     .null "hello world!", $d
 
-start
-    .cpunat
-    .a16x16
+basicStack
+    .word 0
+pythonStack
+    .word $7fff
 
+start
+    ; enter native mode
+    .cpunat
+    .ax16
+    .swapStacks basicStack, pythonStack
+    phd
+    lda #directPage
+    tcd
+
+    ; print hello world
     ldx #hello
     jsr print
 
-    .a8x8
+    ; back to emulation mode
+    pld
+    .swapStacks pythonStack, basicStack
+    .ax8
     .cpuemu
     rts
+    ; tell the assember to go back to 16-bit
+    .al
+    .xl
 
 print .proc
     ; B, X = pointer to string
     pha
     phy
+    ; save and set dp to 0
+    phd
+    lda #0
+    tcd
+    ; need to use basic stack for kernel call
+    .swapStacks pythonStack, basicStack
     .a8
 loop
     lda $0, b, x
@@ -49,9 +72,13 @@ loop
     inx
     bra loop
 done
-    ; put things back and return
     .a16
+    .swapStacks basicStack, pythonStack
+    pld
     ply
     pla
     rts
     .pend
+
+    .align $100
+directPage
