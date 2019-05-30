@@ -82,3 +82,29 @@ done
 
     .align $100
 directPage
+
+entry .segment
+    \1_i :?= 0
+    \1 :?= []
+    \2 = \1_i
+    \1_i += 1
+    \1 := \1 .. [\3]
+    .endm
+
+    .entry ops, op_a1, a1
+    .entry ops, op_b1, b1
+    .entry ops, op_c1, c1
+
+table: .word ops
+
+a1:
+    lda #op_a1
+    rts
+
+b1:
+    lda #op_b1
+    rts
+
+c1:
+    lda #op_c1
+    rts
