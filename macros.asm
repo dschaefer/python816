@@ -42,3 +42,22 @@ swapStacks .macro from, to
     lda \to
     tcs
     .endm
+
+; an enum
+;   \1 enum name
+;   \2 enum item
+enum .segment
+    \1 :?= 0
+    \2 = \1
+    \1 += 1
+    .endm
+
+; table entry indexed by an enum
+;   \1 enum name
+;   \2 enum item
+;   \3 item value
+entry .segment
+    .enum \1, \2
+    \1_table :?= []
+    \1_table := \1_table .. [\3]
+    .endm

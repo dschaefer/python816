@@ -1,4 +1,5 @@
     .include "macros.asm"
+    .include "types.asm"
 
 *   = $0801
     .word (+)                   ; pointer to next line
@@ -82,29 +83,10 @@ done
 
     .align $100
 directPage
+dp .struct
+x .byte ?
+    .ends
 
-entry .segment
-    \1_i :?= 0
-    \1 :?= []
-    \2 = \1_i
-    \1_i += 1
-    \1 := \1 .. [\3]
-    .endm
-
-    .entry ops, op_a1, a1
-    .entry ops, op_b1, b1
-    .entry ops, op_c1, c1
-
-table: .word ops
-
-a1:
-    lda #op_a1
-    rts
-
-b1:
-    lda #op_b1
-    rts
-
-c1:
-    lda #op_c1
-    rts
+myint   .dstruct obj_int16, 16
+myint2  .dstruct obj_int16, 16
+mystr   .dstruct obj_string, "hello world!"
