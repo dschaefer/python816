@@ -61,3 +61,6 @@ entry .segment
     \1_table :?= []
     \1_table := \1_table .. [\3]
     .endm
+
+min .function a, b
+    .endf a < b ? a : b

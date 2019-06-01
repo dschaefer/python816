@@ -90,3 +90,5 @@ x .byte ?
 myint   .dstruct obj_int16, 16
 myint2  .dstruct obj_int16, 16
 mystr   .dstruct obj_string, "hello world!"
+mydict  .dstruct obj_dict, 16
+myprint .dstruct obj_builtin, print
