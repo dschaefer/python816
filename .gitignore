@@ -1,3 +1,4 @@
 *.d
 *.prg
 *.list
+__pycache__
