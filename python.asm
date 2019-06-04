@@ -11,18 +11,18 @@
 hello
     .null "hello world!", $d
 
-basicStack
+basic_stack
     .word 0
-pythonStack
-    .word $7fff
+python_stack
+    .word end_python_stack - 1
 
 start
     ; enter native mode
     .cpunat
     .ax16
-    .swapStacks basicStack, pythonStack
+    .swapStacks basic_stack, python_stack
     phd
-    lda #directPage
+    tsc
     tcd
 
     ; print hello world
@@ -31,7 +31,7 @@ start
 
     ; back to emulation mode
     pld
-    .swapStacks pythonStack, basicStack
+    .swapStacks python_stack, basic_stack
     .ax8
     .cpuemu
     rts
@@ -48,7 +48,7 @@ print .proc
     lda #0
     tcd
     ; need to use basic stack for kernel call
-    .swapStacks pythonStack, basicStack
+    .swapStacks python_stack, basic_stack
     .a8
 loop
     lda $0, b, x
@@ -74,17 +74,17 @@ loop
     bra loop
 done
     .a16
-    .swapStacks basicStack, pythonStack
+    .swapStacks basic_stack, python_stack
     pld
     ply
     pla
     rts
     .pend
 
-    .align $100
-directPage
-dp .struct
-x .byte ?
-    .ends
-
     .include "ops.asm"
+    .include "tests/doug.asm"
+
+    .align $1000
+start_python_stack
+    .fill $1000
+end_python_stack

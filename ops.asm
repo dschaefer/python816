@@ -8,6 +8,10 @@ op .segment code
     .endm
 
     .op load_const
+    .op load_none
+    .op call_function
+    .op pop_top
+    .op return_value
 
 ops_table .word ops_list
 
@@ -21,4 +25,16 @@ imp_load_const
     ; load const number
     ; figure out const address
     ; push address
+    jmp next_instr
+
+imp_load_none
+    jmp next_instr
+
+imp_call_function
+    jmp next_instr
+
+imp_pop_top
+    jmp next_instr
+
+imp_return_value
     jmp next_instr

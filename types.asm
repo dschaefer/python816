@@ -6,7 +6,7 @@ free        .byte ?
 int16       .byte ?
 string      .byte ?
 dict        .byte ?
-func        .byte ?
+code        .byte ?
 builtin     .byte ?
             .ends
 
@@ -37,10 +37,12 @@ value       .word \value
             .ends
 
 ; null terminated strings
-; TODO make sure size is even?
 obj_string  .struct value = ""
-            .dstruct obj_header, types.string, min(len(\value) + 1 + 4, 6)
+-
+            .dstruct obj_header, types.string, (+) - (-)
 value       .null \value
+            .align 2
++
             .ends
 
 ; dictionary as array of key, value far pointers
@@ -52,4 +54,10 @@ value       .fill \elements * 6, 0
 obj_builtin .struct label
             .dstruct obj_header, types.builtin
 value       .word \label
+            .ends
+
+obj_code    .struct size, num_consts = 0, num_locals = 0
+            .dstruct obj_header, types.code, \size
+            .byte \num_consts
+            .byte \num_locals
             .ends
