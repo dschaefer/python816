@@ -1,7 +1,3 @@
-    .cpu "65816"
-    .autsiz
-    .enc "screen"
-
 a8 .macro
     sep #$20
     .endm

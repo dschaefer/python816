@@ -58,6 +58,7 @@ value       .word \label
 
 obj_code    .struct size, num_consts = 0, num_locals = 0
             .dstruct obj_header, types.code, \size
-            .byte \num_consts
-            .byte \num_locals
+consts_size .byte \num_consts * 3
+locals_size .byte \num_locals * 3
+consts
             .ends
