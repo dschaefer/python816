@@ -1,6 +1,7 @@
 PROGRAM = python.prg
 OBJS = \
-	python.o
+	python.o \
+	tests/doug.o
 
 AS = cl65
 ASFLAGS = -c -t c64 -l $(basename $<).list --create-dep $(basename $<).d
@@ -12,7 +13,7 @@ $(PROGRAM): $(OBJS)
 -include $(OBJS:.o=.d)
 
 clean:
-	del *.o *.d *.list *.map *.vice *.prg
+	rm -fr *.o *.d *.list */*.o */*.d */*.list *.map *.vice *.prg
 
 run:	$(PROGRAM)
 	xscpu64 -moncommands hello.vice -fs9 . -device9 1 -iecdevice9 $(PROGRAM)
