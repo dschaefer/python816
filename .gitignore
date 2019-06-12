@@ -1,4 +1,6 @@
 *.d
-*.prg
+*.o
 *.list
-__pycache__
+*.map
+*.vice
+*.prg
