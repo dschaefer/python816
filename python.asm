@@ -2,7 +2,6 @@
     ; use petscii
     .enc "screen"
     ; explicitly set bank and dp mode
-    .databank ?
     .dpage ?
     ; follow sep and rep's
     .autsiz
@@ -21,10 +20,6 @@ basic_stack
     .word 0
 python_stack
     .word (<>end_python_stack) - 1
-curr_code
-    .word 0
-curr_ip
-    .word 0
 
 start
     ; enter native mode
@@ -33,23 +28,17 @@ start
     phd
     .swapStacks basic_stack, python_stack
 
-    ; - set start up code object -
-    ; load the data bank register
+    ; run our example code
+    ; data bank
     .a8
     lda #`doug
     pha
     plb
     .a16
-    ; save the offset into the bank
-    lda #<>doug
-    sta curr_code
-    ; find the first instruction
-    ; curr_ip = curr_code + #obj_code.consts + curr_code->consts_size
-    tay
-    clc
-    adc #obj_code.consts
-    adc obj_code.consts_size, b, y
-    sta curr_ip
+    ; code address in X
+    ldx #<>doug
+    ; and go
+    jsr run_code
 
     ; back to emulation mode
     .swapStacks python_stack, basic_stack
@@ -60,6 +49,52 @@ start
     ; tell the assember to go back to 16-bit
     .al
     .xl
+
+frame_code .struct
+ip      .word ?
+code    .word ?
+locals
+        .ends
+
+    ; run_code - X, b = address of code
+run_code
+    ; save current SP in Y
+    tsc
+    tay
+    ; space for args
+    tsc
+    sec
+    sbc obj_code.locals_size, x
+    tcs
+    ; save the code address
+    phx
+    ; set up IP = code + &code->consts + code->consts_size
+    clc
+    adc #obj_code.consts
+    .a8
+    adc obj_code.consts_size, x
+    .a16
+    pha
+    ; set up frame pointer (DP) and save stack (in Y)
+    tsc
+    phy
+    phd
+    inc a
+    tcd
+
+foo
+next_instr
+    ldx frame_code.ip, d
+    cpx #op_return_value
+    beq +
+    jmp (foo, x)
+
++
+    ; pop off the stack
+    pld
+    pla
+    tcs
+    rts
 
     .include "ops.asm"
     .include "print.asm"
