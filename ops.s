@@ -1,5 +1,5 @@
     .include "python.h.s"
-    .export ops_table
+    .export run_code
 
 ; ops table, must match list of ops in OpCode enum
 ops_table:
@@ -10,20 +10,27 @@ ops_table:
     .addr op_pop_top
     .addr op_return_value
 
+; run_code - data bank, X has address of code object
+run_code:
+    ; set up stack
+next_instr:
+    ; run next instruction
+    ; the return_value op will do the rts
+
 op_load_const:
-    rts
+    jmp next_instr
 
 op_load_name:
-    rts
+    jmp next_instr
 
 op_load_none:
-    rts
+    jmp next_instr
 
 op_call_function:
-    rts
+    jmp next_instr
 
 op_pop_top:
-    rts
+    jmp next_instr
 
 op_return_value:
     rts

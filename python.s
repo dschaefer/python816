@@ -1,9 +1,9 @@
     .p816
     .smart
-    .include "macros.h.s"
+    .include "python.h.s"
 
     .import doug
-    .import ops_table
+    .import run_code
 
 start:
     cpunat
@@ -11,9 +11,9 @@ start:
     swapStacks basic_stack, python_stack
     phd
 
-    ; TODO stuff
-    lda #ops_table
-    ldx #doug
+    ; call the doug test code
+    ldbx doug
+    jsr run_code
 
     pld
     swapStacks python_stack, basic_stack
