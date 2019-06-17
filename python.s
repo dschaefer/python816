@@ -2,6 +2,9 @@
     .smart
     .include "macros.h.s"
 
+    .import doug
+    .import ops_table
+
 start:
     cpunat
     ai16
@@ -9,6 +12,8 @@ start:
     phd
 
     ; TODO stuff
+    lda #ops_table
+    ldx #doug
 
     pld
     swapStacks python_stack, basic_stack

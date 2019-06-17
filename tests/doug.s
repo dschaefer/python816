@@ -1,19 +1,25 @@
-    .include "../macros.h.s"
     .include "../python.h.s"
 
-:   newString "print"
-:   newString "hello world!"
+    .export doug
 
+print_name:
+    newString "print"
+
+hello_world_string:
+    newString "hello world!"
+
+    ; test code object
+    ; print("hello world!")
 doug:
     newCode :++ - :+, 0, :+++ - :++
 :   ; consts
-    .faraddr :---
-    .faraddr :--
+    .faraddr print_name
+    .faraddr hello_world_string
 :   ; code
-    .byte OpCodes::load_const, 0
-    .byte OpCodes::load_const, 1
-    .byte OpCodes::call_function, 1
-    .byte OpCodes::pop_top
-    .byte OpCodes::load_none
-    .byte OpCodes::return_value
+    .byte OpCodes::load_name, 0     ; look up named function and push
+    .byte OpCodes::load_const, 1    ; push const parameter
+    .byte OpCodes::call_function, 1 ; call func with one parameter
+    .byte OpCodes::pop_top          ; pop the result of the func
+    .byte OpCodes::load_none        ; push none object
+    .byte OpCodes::return_value     ; return it
 :   ; end of code

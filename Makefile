@@ -1,6 +1,7 @@
 PROGRAM = python.prg
 OBJS = \
 	python.o \
+	ops.o \
 	tests/doug.o
 
 AS = cl65

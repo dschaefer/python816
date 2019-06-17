@@ -1,5 +1,6 @@
-    ; types and ops headers
+    .include "macros.h.s"
 
+; the enum of object types
 .enum Types
     free
     int16
@@ -79,9 +80,16 @@
 
 ; opcodes
 .enum OpCodes
+    ; push pointer to constant
     load_const
+    ; look up named object and push the object
+    load_name
+    ; push the None object
     load_none
+    ; call a function with specified number of parameters
     call_function
+    ; pop the top of the stack
     pop_top
+    ; return the value at the top of the stack
     return_value
 .endenum
