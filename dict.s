@@ -21,7 +21,7 @@
     pha
     plb
     a16
-    ; walk through the string
+    ; walk through the string using stack space for a second accumulator
     lda #0
     pha
     ldy #String::value
@@ -38,6 +38,9 @@ hash_done:
     pla
     ldy #Dict::mask
     ora [argstart + 6], y
+    mult6
+
+    ; step 2 - find a free element
 
     plb
     pld

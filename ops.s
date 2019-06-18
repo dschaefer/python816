@@ -63,7 +63,8 @@ run_code:
     inc a
     tad
     ; no go back and add args space to result pointer
-    mult3 Frame::scratch
+    lda Frame::scratch
+    mult3 
     adc Frame::result
     sta Frame::result
     ; and off we go

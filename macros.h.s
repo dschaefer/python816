@@ -58,9 +58,21 @@
     ldx #.loword(addr)
 .endmacro
 
-.macro mult3 addr
-    lda addr
+.macro mult3
+    pha
     asl
     clc
-    adc addr
+    adc 1, s
+    sta 1, s
+    pla
+.endmacro
+
+.macro mult6
+    asl
+    pha
+    asl
+    clc
+    adc 1, s
+    sta 1, s
+    pla
 .endmacro
