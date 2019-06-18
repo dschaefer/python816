@@ -1,5 +1,3 @@
-    .p816
-    .smart
     .include "python.h.s"
 
     .import doug
@@ -11,8 +9,9 @@ start:
     swapStacks basic_stack, python_stack
     phd
 
-    ; call the doug test code
+    ; call the doug test code with no args
     ldbx doug
+    lda #0
     jsr run_code
 
     pld

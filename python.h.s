@@ -1,3 +1,7 @@
+    .p816
+    .a16
+    .i16
+    .smart
     .include "macros.h.s"
 
 ; the enum of object types
@@ -64,6 +68,7 @@
 ; code object
 ; includes space for far pointers to constants and after that, the byte code
 ; also a field for the number of locals to allocate on the stack
+; sizes are in bytes
 .struct Code
     header      .tag Object
     consts_size .word

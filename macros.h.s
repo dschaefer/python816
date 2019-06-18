@@ -57,3 +57,10 @@
     a16
     ldx #.loword(addr)
 .endmacro
+
+.macro mult3 addr
+    lda addr
+    asl
+    clc
+    adc addr
+.endmacro
