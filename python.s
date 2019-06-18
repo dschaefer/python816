@@ -24,3 +24,6 @@ basic_stack:
 
 python_stack:
     .word $7fff
+
+globals:
+    newDict 32

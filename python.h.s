@@ -83,6 +83,24 @@
     .word locals_size
 .endmacro
 
+; dictionary object
+; elements are array of pairs, a key and a value
+; the keys are hashed to find which element to start looking
+; to perform well, number of elements must be a power of 2
+; the mask is used to quickly get the element index
+.struct Dict
+    header      .tag Object
+    mask        .word
+    elements    .byte
+.endstruct
+
+.macro newDict num_elems
+    .byte Types::dict, 0
+    .word num_elems * 6 + 6
+    .word num_elems - 1
+    .res num_elems * 6, 0
+.endmacro
+
 ; opcodes
 .enum OpCodes
     ; push pointer to constant

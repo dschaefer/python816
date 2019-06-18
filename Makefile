@@ -2,11 +2,12 @@ PROGRAM = python.prg
 OBJS = \
 	python.o \
 	ops.o \
+	dict.o \
 	tests/doug.o
 
 AS = cl65
 ASFLAGS = -c -t c64 -l $(basename $<).list --create-dep $(basename $<).d
-LDFLAGS = -t c64 -C c64-asm.cfg -u __EXEHDR__ -m $(basename $<).map -Ln $(basename $<).vice
+LDFLAGS = -t c64 -C c64-asm.cfg -u __EXEHDR__ -Ln $(basename $<).vice
 
 $(PROGRAM): $(OBJS)
 	cl65 $(LDFLAGS) -o $@ $^
