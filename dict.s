@@ -9,6 +9,9 @@
 ; TODO assuming key is a string for now
 .proc dict_add
     argstart = 4 + 1
+    dict = argstart + 6
+    key = argstart + 3
+    value = argstart
     phd
     tsa
     tad
@@ -17,7 +20,7 @@
     ; step 1 - calculate hash
     ; change bank to key's bank
     a8
-    lda argstart + 3 + 2
+    lda key + 2
     pha
     plb
     a16
@@ -27,7 +30,7 @@
     ldy #String::value
 hash_loop:
     a8
-    lda [argstart + 3], y
+    lda [key], y
     a16
     beq hash_done
     adc 1, s
@@ -37,10 +40,11 @@ hash_loop:
 hash_done:
     pla
     ldy #Dict::mask
-    ora [argstart + 6], y
+    ora [dict], y
     mult6
 
     ; step 2 - find a free element
+
 
     plb
     pld
