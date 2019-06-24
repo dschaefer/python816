@@ -39,13 +39,32 @@
     tas
 .endmacro
 
-.macro pushFar addr
-    lda #.loword(addr)
-    pha
+.macro phfara addr
     a8
-    lda #.bankbyte(addr)
+    lda addr + 2
     pha
     a16
+    lda addr
+    pha
+.endmacro
+
+.macro pla8
+    a8
+    pla
+    a16
+.endmacro
+
+.macro ply8
+    i8
+    ply
+    i16
+.endmacro
+
+.macro pl3a
+    a8
+    pla
+    a16
+    pla
 .endmacro
 
 ; ldbx - load data bank and X register

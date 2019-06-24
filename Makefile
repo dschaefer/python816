@@ -2,6 +2,7 @@ PROGRAM = python.prg
 OBJS = \
 	python.o \
 	ops.o \
+	string.o \
 	dict.o \
 	tests/doug.o
 

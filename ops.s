@@ -69,7 +69,7 @@ run_code:
     sta Frame::result
     ; and off we go
 next_instr:
-    ; run next instruction
+    ; fetch next instruction
     a8
     lda (Frame::ip)
     inc Frame::ip

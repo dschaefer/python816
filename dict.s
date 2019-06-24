@@ -1,52 +1,42 @@
     .include "python.h.s"
-
-    .export dict_add
+    .import string_hash_word
 
 ; dict_add
-;    - dict far pointer (dp + 11)
-;    - key far pointer (dp + 8)
-;    - value far pointer (dp + 5)
+;    - dict far pointer
+;    - key far pointer
+;    - value far pointer
 ; TODO assuming key is a string for now
+    .export dict_add
 .proc dict_add
-    argstart = 4 + 1
-    dict = argstart + 6
-    key = argstart + 3
-    value = argstart
     phd
     tsa
     tad
-    phb
 
-    ; step 1 - calculate hash
-    ; change bank to key's bank
-    a8
-    lda key + 2
-    pha
-    plb
-    a16
-    ; walk through the string using stack space for a second accumulator
-    lda #0
-    pha
-    ldy #String::value
-hash_loop:
-    a8
-    lda [key], y
-    a16
-    beq hash_done
-    adc 1, s
-    sta 1, s
-    iny
-    bra hash_loop
-hash_done:
+    argstart = 4 ; rts, phd
+    dict = argstart + 6
+    key = argstart + 3
+    value = argstart
+
+    ; push the string pointer for the key and hash
+    phfara key
+    jsr string_hash_word
     pla
+    ply8 ; to get the bank of the pointer off
+
+    ; cut down with mask
     ldy #Dict::mask
     ora [dict], y
+    ; calculate pointer to key
     mult6
+    adc #Dict::elements
 
-    ; step 2 - find a free element
+    ; save the offset so we know when we've wrapped
+    pha
 
+    ; check if string equal
 
-    plb
+    pla
+
     pld
     rts
 .endproc
